@@ -1,20 +1,22 @@
-$(document).ready(function() {
+$(document).ready(function () {
+	console.log("archivo cargado 100%");
+
 	let editar = false;
 	fetchTask();//funcion de mostrar datos
 
 	$('#task-result').hide();
-	$('#search').keyup(function(e) {//realizar busquedas en la DB
-		if($('#search').val()){//para validar si el input esta vasio.
+	$('#search').keyup(function (e) {//realizar busquedas en la DB
+		if ($('#search').val()) {//para validar si el input esta vasio.
 			let search = $('#search').val();
 			$.ajax({
 				url: 'task_search.php',
 				type: 'POST',
-				data: {search},
-				success: function(response) {
+				data: { search },
+				success: function (response) {
 					let searchTasks = JSON.parse(response);
 					let template = '';
-					
-					searchTasks.forEach(searchTasks =>{
+
+					searchTasks.forEach(searchTasks => {
 						template += `<h1> 
 						${searchTasks.nom_tareas}
 						</h1>`
@@ -28,7 +30,7 @@ $(document).ready(function() {
 	});
 
 	//para inserta o modificar datos en la base de datos.
-	$('#task-form').submit(function(e) {//evento onclick
+	$('#task-form').submit(function (e) {//evento onclick
 		const postDate = {
 			id: $('#txtTaskId').val(),
 			name: $('#name').val(),
@@ -51,7 +53,7 @@ $(document).ready(function() {
 		$.ajax({
 			url: 'task_list.php',
 			type: 'GET',
-			success: function(result) {
+			success: function (result) {
 				const tasks = JSON.parse(result);
 				let showDate = '';
 				tasks.forEach(tasks => {
@@ -66,7 +68,7 @@ $(document).ready(function() {
 						</td>
 					</tr>`
 				});
-	
+
 				$('#tasks').html(showDate);
 				editar = false;
 			}
@@ -74,28 +76,28 @@ $(document).ready(function() {
 	}
 
 	//onclick en el boton eliminar.
-	$(document).on('click', '.task-delete', function() {
+	$(document).on('click', '.task-delete', function () {
 		if (confirm('Are you sure you  want to delete it?')) {
 			let elementId = $(this)[0].parentElement.parentElement;
 			let taskId = $(elementId).attr('taskId');
 			console.log(taskId);
 
-			$.post('task_delete.php', {taskId}, function(resultDelete) {
+			$.post('task_delete.php', { taskId }, function (resultDelete) {
 				fetchTask();
 			})
 		}
 	})
 
 	//para mostrar los datos a modificcar
-	$(document).on('click', '.task-itmen', function() {
+	$(document).on('click', '.task-itmen', function () {
 		let elementId = $(this)[0].parentElement.parentElement;
 		let taskId = $(elementId).attr('taskId');
 
-		$.post('task_single.php', {taskId}, function(resultSingle) {
+		$.post('task_single.php', { taskId }, function (resultSingle) {
 			const task = JSON.parse(resultSingle);
 			$('#txtTaskId').val(task.id);
 			$('#name').val(task.name);
-			$('#description').val(task.description); 
+			$('#description').val(task.description);
 			editar = true;
 		})
 	})
